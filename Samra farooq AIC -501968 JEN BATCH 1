@@ -1,0 +1,63 @@
+import random
+import string
+
+def get_character_pool(use_letters, use_numbers, use_symbols):
+    pool = ""
+    if use_letters:
+        pool += string.ascii_letters
+    if use_numbers:
+        pool += string.digits
+    if use_symbols:
+        pool += string.punctuation
+    return pool
+
+
+def generate_password(length, pool):
+    password = "".join(random.choice(pool) for _ in range(length))
+    return password
+
+
+def is_strong(password):
+    has_letter = any(c.isalpha() for c in password)
+    has_number = any(c.isdigit() for c in password)
+    has_symbol = any(c in string.punctuation for c in password)
+    return has_letter and has_number and has_symbol
+
+
+def main():
+    print("="*40)
+    print("Professional Password Generator")
+    print("="*40)
+
+    try:
+        length = int(input("Enter password length (min 6): "))
+        if length < 6:
+            print("Password length should be at least 6")
+            return
+    except ValueError:
+        print("Invalid input! Enter a number.")
+        return
+
+    use_letters = input("Include letters? (y/n): ").lower() == 'y'
+    use_numbers = input("Include numbers? (y/n): ").lower() == 'y'
+    use_symbols = input("Include symbols? (y/n): ").lower() == 'y'
+
+    pool = get_character_pool(use_letters, use_numbers, use_symbols)
+
+    if not pool:
+        print("You must select at least one option!")
+        return
+
+    password = generate_password(length, pool)
+
+    # Ensure strong password
+    if use_letters and use_numbers and use_symbols:
+        while not is_strong(password):
+            password = generate_password(length, pool)
+
+    print("\n Generated Secure Password:")
+    print(password)
+
+
+if __name__ == "__main__":
+    main()
